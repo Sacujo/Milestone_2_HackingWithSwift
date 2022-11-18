@@ -15,11 +15,16 @@ class ViewController: UITableViewController {
     
 
     override func viewDidLoad() {
-        navigationItem.rightBarButtonItem = UIBarButtonItem(barButtonSystemItem: .add, target: self, action: #selector(promptToAddInList))
+        let addButton = UIBarButtonItem(barButtonSystemItem: .add, target: self, action: #selector(promptToAddInList))
+        let shareButton = UIBarButtonItem(barButtonSystemItem: .action, target: self, action: #selector(shareTapped))
         
+        navigationItem.rightBarButtonItems = [addButton, shareButton]
+        navigationItem.leftBarButtonItem = UIBarButtonItem(title: "Empty List", style: .plain, target: self, action: #selector(emptyShoppingList))
         title = "Shopping List"
         super.viewDidLoad()
         
+        
+       
         
         // Do any additional setup after loading the view.
     }
@@ -32,6 +37,11 @@ class ViewController: UITableViewController {
         let cell = tableView.dequeueReusableCell(withIdentifier: "Item", for: indexPath)
         cell.textLabel?.text = shoppingList[indexPath.row]
         return cell
+    }
+    
+    @objc func emptyShoppingList() {
+        shoppingList.removeAll(keepingCapacity: true)
+        tableView.reloadData()
     }
     
     @objc func promptToAddInList() {
@@ -55,6 +65,14 @@ class ViewController: UITableViewController {
         let indexPath = IndexPath(row: 0, section: 0)
         tableView.insertRows(at: [indexPath], with: .automatic)
         return
+    }
+    
+    @objc func shareTapped() {
+        let list = shoppingList.joined(separator: "\n")
+        
+        let vc = UIActivityViewController(activityItems: [list], applicationActivities: [])
+        vc.popoverPresentationController?.barButtonItem = navigationItem.rightBarButtonItem
+        present(vc, animated: true)
     }
     
     
